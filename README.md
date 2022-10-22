@@ -1,107 +1,51 @@
-# VidLanKD
+# Intensive Learning methods for circuit noise suppression
 
-Implementation of [**VidLanKD: Improving Language Understanding via Video-Distilled Knowledge Transfer**](https://arxiv.org/pdf/2107.02681.pdf) by Zineng Tang, Jaemin Cho, Hao Tan, Mohit Bansal.
+### **[Intensive Learning methods for circuit noise suppression](https://github.com/xieyonghao/Intensive-Learning-methods/edit/main/README.md)]**  
+[Yonghao Xie](https://github.io/xieyonghao), Chong Mo   
 
-## Setup
+   we proposed a **fusion optimization model**, and proposed an **improved Genetic Algorithm**, which is automatically adjust fusion parameter according to soil and distance factors, it made the prediction of signal attenuation under different soil components more accurately
+
+## Introduction
+Core idea:
+   The **intelligence** is trained by continuously interacting with the environment, and the intelligence learns how to **optimise circuit parameters by constantly adjusting its own strategies during the training process**.
+
+![image](https://user-images.githubusercontent.com/72656602/197318438-36fc63cf-ea8a-4679-8305-5403a2086a83.png)
+
+   Define the circuit parameter space:
+
+![image](https://user-images.githubusercontent.com/72656602/197318396-1745a477-f70d-48aa-87bf-c566c969853e.png)
+
+   Optimisation objectives：
+
+![image](https://user-images.githubusercontent.com/72656602/197318422-9fcfb236-7abe-4601-bbb3-890ad3705eae.png)
+
+   Learning curve of the training process：
+
+![image](https://user-images.githubusercontent.com/72656602/197318460-71e65724-37bb-4a25-8fc9-d1dd3782646b.png)
+
+   Results of having an intelligent body model automatically find a set of circuit parameters：
+
+![image](https://user-images.githubusercontent.com/72656602/197318491-18b1037a-d560-445b-b12b-3902abd22973.png)
+
+   The test was repeated 25 times and the results are shown in the figure above.As can be seen from the graphs, the 25 tests of the smartbody were able to find circuit parameters that met the design objectives.As the research progresses factors such as the effect of temperature on the actuation circuit and electromagnetic interference will be incorporated into the optimisation.
+
+Comparison chart using improved search algorithm：
+
+![image](https://user-images.githubusercontent.com/72656602/197318549-e72e1bdf-90e5-4cdb-82bd-668043d8cfcb.png)
+
+
+## Citation
 ```
-# Create python environment (optional)
-conda create -n vidlankd python=3.7
-
-# Install python dependencies
-pip install -r requirements.txt
-```
-To speed up the training, we use mixed precision with [Apex](https://github.com/NVIDIA/apex).
-```
-git clone https://github.com/NVIDIA/apex
-cd apex
-pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
-```
-
-## Pretrained Models
-(1. Teacher model (BERT-12L-768H) 2. student mode (BERT-12L-768H, KD-NST)) 
-[Gdrive link](https://drive.google.com/drive/folders/1zpwjej5SuuMJ65YU02x_T7kxbd7Ed-j_?usp=sharing)
-We also updated small models.
-
-Creat directory and put the models under 'snap/vlm' or custom name
-
-
-
-## Dataset Preparation
-### Text Dataset 
-We provide scripts to obtain datasets "wiki103" and "wiki".
-
-[**Wiki103**](https://blog.einstein.ai/the-wikitext-long-term-dependency-language-modeling-dataset/), a seleted subset of English Wikipedia.
-```shell script
-bash data/wiki103/get_data_cased.bash
-```
-**English Wikipedia**. 
-The scripts are modified from [XLM](https://github.com/facebookresearch/XLM).
-```shell script
-bash data/wiki/get_data_cased.bash en
-```
-
-
-### Video Dataset
-
-[Howto100m](https://www.di.ens.fr/willow/research/howto100m/)
-where you can download official captions and videos features.
-
-#### Video Features Extraction Code
-
-We follow Howtoo100m to use its feature extractor
-[2D+3D]([https://www.di.ens.fr/willow/research/howto100m/](https://github.com/antoine77340/video_feature_extractor))
-
-* We extracted our 2D-level video features with ResNet152 from [torchvision](https://github.com/pytorch/vision).
-* We extracted our 3D-level video features with [3D-RexNext](https://github.com/kenshohara/3D-ResNets-PyTorch).
-
-
-
-### Downstream tasks
-
-#### [GLUE](https://gluebenchmark.com/) dataset
-<!-- Downloaing scripts from [huggingface transformers text classification example](https://github.com/huggingface/transformers/tree/master/examples/text-classification) (transformers==3.3) -->
-<!-- wget https://raw.githubusercontent.com/huggingface/transformers/master/utils/download_glue_data.py -->
-
-Download dataset
-```bash
-wget https://raw.githubusercontent.com/huggingface/transformers/master/utils/download_glue_data.py
-python download_glue_data.py --data_dir data/glue --tasks all
+@inproceedings{
+  author    = {Yonghao Xie,Chong Mo},
+  year      = {2022}
+}
 ```
 
-## Training
+## Acknowledgement
 
-**Teacher model pre-training**
-```bash
-# bash scripts/small_vlm_howto100m.bash $GPUS #teacher_SNAP_PATH
-bash scripts/small_vlm_howto100m.bash 0,1,2,3 howto100m_bert_small_vokenhinge
-# bash scripts/base_vlm_howto100m.bash $GPUS #teacher_SNAP_PATH
-bash scripts/base_vlm_howto100m.bash 0,1,2,3 howto100m_bert_base_vokenhinge
-```
+Thank you for the support of the National Key Technologies Research and Development Program of China.
 
-**Knowledge transfer to student model**
-```bash
-# bash scripts/small_vlm_wiki103.bash $GPUS #teacher_SNAP_PATH #student_SNAP_PATH
-bash scripts/small_vlm_wiki103.bash 0,1,2,3 howto100m_bert_small_vokenhinge/checkpoint-epoch0019 wiki103_bert_small_vokenmmd
-# bash scripts/base_vlm_wiki.bash $GPUS #teacher_SNAP_PATH #student_SNAP_PATH
-bash scripts/base_vlm_wiki.bash 0,1,2,3 howto100m_bert_base_vokenhinge/checkpoint-epoch0019 wiki_bert_base_vokenmmd
-```
+## Contact
 
-
-**Baseline BERT model**
-```bash
-bash scripts/base_wiki.bash 0,1,2,3 wiki_bert_base
-```
-
-
-**Finetuning on [GLUE](https://gluebenchmark.com/) tasks**
-```bash
-# bash scripts/run_glue_at_epoch.bash $GPUS $NumTrainEpochs $SNAP_PATH                        
-bash scripts/run_glue_at_epoch.bash 0,1,2,3 3 snap/vlm/wiki103_bert_small_vokenmmd/checkpoint-epoch0019                  
-```
-
-
-
-## Acknowledgements
-
-Part of the code is built based on [vokenization](https://github.com/airsplay/vokenization), huggingface [transformers](https://github.com/huggingface/transformers), and facebook [faiss](https://github.com/facebookresearch/faiss).
-
+Yonghao Xie(2020111721@nefu.edu.cn)
