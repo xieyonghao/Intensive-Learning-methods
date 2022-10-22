@@ -3,8 +3,6 @@
 ### **[Intensive Learning methods for circuit noise suppression](https://github.com/xieyonghao/Intensive-Learning-methods/edit/main/README.md)]**  
 [Yonghao Xie](https://github.io/xieyonghao), Chong Mo   
 
-   we proposed a **fusion optimization model**, and proposed an **improved Genetic Algorithm**, which is automatically adjust fusion parameter according to soil and distance factors, it made the prediction of signal attenuation under different soil components more accurately
-
 ## Introduction
 Core idea:
    The **intelligence** is trained by continuously interacting with the environment, and the intelligence learns how to **optimise circuit parameters by constantly adjusting its own strategies during the training process**.
